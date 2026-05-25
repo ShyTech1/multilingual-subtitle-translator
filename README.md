@@ -15,6 +15,15 @@ CPU/GPU images.
 
 ---
 
+![Auto-generated Hebrew subtitles on an Arabic-language scene](Screenshot.png)
+
+> Auto-generated Hebrew subtitles overlaid on an Arabic-language scene.
+> Frame from *Fauda* (yes Studios), included for technology-demonstration
+> purposes only — all rights to the source video belong to their respective
+> owners.
+
+---
+
 ## Why
 
 Most bilingual shows (Fauda, Tehran, In Treatment, foreign-language drama
