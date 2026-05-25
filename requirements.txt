@@ -1,0 +1,4 @@
+faster-whisper>=1.2.1
+deep-translator>=1.11
+truststore>=0.10
+imageio-ffmpeg>=0.6

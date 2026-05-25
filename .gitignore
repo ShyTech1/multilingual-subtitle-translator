@@ -1,0 +1,51 @@
+# --- Project artifacts (videos, audio cache, generated subtitles, logs) ---
+# Anything that's media content stays out of the repo (copyright + size).
+*.mkv
+*.mp4
+*.avi
+*.mov
+*.m4v
+*.webm
+*.wav
+*.mp3
+*.flac
+*.srt
+*.vtt
+*.ass
+*.log
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+
+# --- IDE / editor ---
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Docker / OS ---
+*.tmp

@@ -1,0 +1,40 @@
+# Build:
+#   docker compose --profile gpu build      # NVIDIA users
+#   docker compose --profile cpu build      # everyone else
+#
+# Run on the video file(s) in ./videos (mounted to /data in the container).
+# The huggingface model cache is a named volume so models survive container
+# rebuilds and are shared between cpu/gpu images:
+#   docker compose --profile gpu run --rm gpu               # auto-finds video
+#   docker compose --profile gpu run --rm gpu show.mkv      # specific file
+#   docker compose --profile cpu run --rm cpu --help        # pipeline help
+services:
+  gpu:
+    profiles: [gpu]
+    image: subtitle-translator:cuda
+    build:
+      context: .
+      dockerfile: docker/cuda.Dockerfile
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ./videos:/data
+      - hf-cache:/cache/huggingface
+
+  cpu:
+    profiles: [cpu]
+    image: subtitle-translator:cpu
+    build:
+      context: .
+      dockerfile: docker/cpu.Dockerfile
+    volumes:
+      - ./videos:/data
+      - hf-cache:/cache/huggingface
+
+volumes:
+  hf-cache:
