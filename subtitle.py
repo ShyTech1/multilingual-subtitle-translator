@@ -277,6 +277,10 @@ def main() -> int:
     ap.add_argument("--languages", default="he,ar,fr",
                     help="Comma-separated list of language codes to run passes for "
                          "(any non-Hebrew picked segments get translated to Hebrew)")
+    ap.add_argument("--out-suffix", default="",
+                    help="Extra infix inserted before .he.srt / .he.raw.srt / .ar.raw.srt "
+                         "in output filenames (e.g. '.large-v3' -> base.large-v3.he.srt). "
+                         "Useful for keeping multiple runs side-by-side.")
     args = ap.parse_args()
 
     video = args.video.resolve()
@@ -287,9 +291,10 @@ def main() -> int:
     out_dir = video.parent
     base = video.stem
     wav_path = out_dir / f"{base}.audio16k.wav"
-    he_path = out_dir / f"{base}.he.srt"
-    he_raw_path = out_dir / f"{base}.he.raw.srt"
-    ar_raw_path = out_dir / f"{base}.ar.raw.srt"
+    suffix = args.out_suffix
+    he_path = out_dir / f"{base}{suffix}.he.srt"
+    he_raw_path = out_dir / f"{base}{suffix}.he.raw.srt"
+    ar_raw_path = out_dir / f"{base}{suffix}.ar.raw.srt"
 
     if not wav_path.exists():
         print(f"Extracting audio -> {wav_path.name}", flush=True)
