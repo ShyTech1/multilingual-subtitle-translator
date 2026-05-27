@@ -93,8 +93,10 @@ sub-interval, the candidate with the highest `avg_logprob − penalty` wins.
 ```
 
 The launcher auto-detects whether you have an NVIDIA GPU and picks the right
-image. First run builds the image (~few minutes) and downloads the Whisper
-model (~1.5 GB). Both are cached afterwards.
+image. First run pulls the pre-built image from
+[GHCR](https://github.com/ShyTech1/multilingual-subtitle-translator/pkgs/container/multilingual-subtitle-translator)
+and downloads the Whisper model (~1.5 GB). Both are cached afterwards.
+Set `TRANSLATOR_BUILD_LOCAL=1` to build the image locally instead.
 
 See [`docker/README.md`](docker/README.md) for full details, including
 `docker compose` usage.

@@ -1,6 +1,6 @@
-# Build:
-#   docker compose --profile gpu build      # NVIDIA users
-#   docker compose --profile cpu build      # everyone else
+# Pre-built images are published to GHCR by .github/workflows/docker-publish.yml.
+# `docker compose run` will pull them automatically the first time. To rebuild
+# locally instead, run `docker compose --profile gpu build` / `--profile cpu build`.
 #
 # Run on the video file(s) in ./videos (mounted to /data in the container).
 # The huggingface model cache is a named volume so models survive container
@@ -11,7 +11,7 @@
 services:
   gpu:
     profiles: [gpu]
-    image: subtitle-translator:cuda
+    image: ghcr.io/shytech1/multilingual-subtitle-translator:cuda
     build:
       context: .
       dockerfile: docker/cuda.Dockerfile
@@ -28,7 +28,7 @@ services:
 
   cpu:
     profiles: [cpu]
-    image: subtitle-translator:cpu
+    image: ghcr.io/shytech1/multilingual-subtitle-translator:cpu
     build:
       context: .
       dockerfile: docker/cpu.Dockerfile

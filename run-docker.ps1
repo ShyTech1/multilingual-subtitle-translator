@@ -5,9 +5,11 @@
 #   .\run-docker.ps1 path\to\video.mkv
 #   .\run-docker.ps1 path\to\video.mkv --model large-v3
 #
-# First run will build the image (~few minutes) and pull the Whisper model
-# (~1.5 GB). Both are cached afterwards.
+# By default pulls a pre-built image from GHCR. Set $env:TRANSLATOR_BUILD_LOCAL=1
+# to force a local build instead.
 $ErrorActionPreference = 'Stop'
+
+$registry = 'ghcr.io/shytech1/multilingual-subtitle-translator'
 
 # Detect GPU
 $useGpu = $false
@@ -17,23 +19,37 @@ try {
 } catch { }
 
 if ($useGpu) {
-    $image = 'subtitle-translator:cuda'
+    $variant = 'cuda'
     $dockerfile = 'docker/cuda.Dockerfile'
     $gpuArgs = @('--gpus', 'all')
-    Write-Host "GPU detected — using $image" -ForegroundColor Green
+    Write-Host "GPU detected — using $variant image" -ForegroundColor Green
 } else {
-    $image = 'subtitle-translator:cpu'
+    $variant = 'cpu'
     $dockerfile = 'docker/cpu.Dockerfile'
     $gpuArgs = @()
-    Write-Host "No NVIDIA GPU detected — using $image (CPU-only, slow)" -ForegroundColor Yellow
+    Write-Host "No NVIDIA GPU detected — using $variant image (CPU-only, slow)" -ForegroundColor Yellow
 }
 
-# Build image if missing
-$exists = (& docker image inspect $image 2>$null | Out-String).Trim()
-if (-not $exists) {
-    Write-Host "Building $image (one-time, a few minutes)..." -ForegroundColor Cyan
-    & docker build -f $dockerfile -t $image .
-    if ($LASTEXITCODE -ne 0) { throw "docker build failed" }
+$image = "${registry}:${variant}"
+
+# Resolve image: pull from GHCR by default, fall back to local build on failure.
+$forceLocal = $env:TRANSLATOR_BUILD_LOCAL -eq '1'
+$haveImage  = (& docker image inspect $image 2>$null | Out-String).Trim()
+
+if (-not $haveImage) {
+    if (-not $forceLocal) {
+        Write-Host "Pulling $image ..." -ForegroundColor Cyan
+        & docker pull $image
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Pull failed — falling back to local build." -ForegroundColor Yellow
+            $forceLocal = $true
+        }
+    }
+    if ($forceLocal) {
+        Write-Host "Building $image locally (one-time, a few minutes)..." -ForegroundColor Cyan
+        & docker build -f $dockerfile -t $image .
+        if ($LASTEXITCODE -ne 0) { throw "docker build failed" }
+    }
 }
 
 # Decide what to mount as /data and how to invoke
