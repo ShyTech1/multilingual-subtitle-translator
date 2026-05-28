@@ -22,8 +22,8 @@ RUN apt-get update \
     && ln -sf /usr/bin/python3 /usr/local/bin/python
 
 # Ubuntu 24.04 ships PEP 668; allow system-site installs in the container.
-RUN pip install --break-system-packages --upgrade pip
-
+# (Distro-provided pip is recent enough — skipping the upgrade avoids the
+# "Cannot uninstall pip ... RECORD file not found" failure.)
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --break-system-packages -r requirements.txt
